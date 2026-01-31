@@ -24,5 +24,9 @@ public class Main {
         System.out.println("Is Prefix (empty): " + sp.isPrefix("")); // true
         System.out.println("Is Suffix (empty): " + sp.isSuffix("")); // true
         System.out.println("Is Substring (empty): " + sp.isSubstring("")); // true
+        
+        StringProcessor sp1 = new StringProcessor("level");
+        System.out.println("Is Palindrome: " + sp.isPalindrome()); // false
+        System.out.println("Is Palindrome: " + sp1.isPalindrome()); // true
     }
 }
