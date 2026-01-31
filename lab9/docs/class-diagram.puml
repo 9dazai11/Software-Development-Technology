@@ -1,0 +1,74 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' ===== Пакет app =====
+package app {
+    class Main
+    class CardioAdvisorFacade <<Facade>> {
+        -detectors : List<Detector>
+        -reportBuilder : TextReportBuilder
+        +analyzeAndBuildReport(heartRate : int) : String
+    }
+}
+
+' ===== Пакет analysis =====
+package analysis {
+    interface Detector <<Strategy>> {
+        +detect(heartRate : int, result : AnalysisResult) : void
+    }
+
+    class BradycardiaDetector <<ConcreteStrategy>> {
+        +detect(heartRate : int, result : AnalysisResult) : void
+    }
+
+    class TachycardiaDetector <<ConcreteStrategy>> {
+        +detect(heartRate : int, result : AnalysisResult) : void
+    }
+}
+
+' ===== Пакет domain =====
+package domain {
+    class AnalysisResult {
+        -heartRate : int
+        -messages : List<String>
+        +addMessage(message : String) : void
+    }
+}
+
+' ===== Пакет report =====
+package report {
+    class TextReportBuilder <<Builder>> {
+        +build(result : AnalysisResult) : String
+    }
+}
+
+' ===== Связи =====
+Main --> CardioAdvisorFacade : uses
+CardioAdvisorFacade o-- "1..*" Detector : detectors
+Detector --> AnalysisResult : updates
+BradycardiaDetector ..|> Detector
+TachycardiaDetector ..|> Detector
+CardioAdvisorFacade --> TextReportBuilder : builds report
+TextReportBuilder --> AnalysisResult : reads
+
+' ===== Комментарии по шаблонам =====
+note right of CardioAdvisorFacade
+Facade:
+единая точка входа
+для анализа ЭКГ и
+формирования отчёта
+end note
+
+note right of Detector
+Strategy:
+алгоритмы детектирования
+взаимозаменяемы
+end note
+
+note right of TextReportBuilder
+Builder:
+пошаговое формирование
+текстового отчёта
+end note
+
+@enduml
