@@ -83,25 +83,4 @@ public class StringProcessor {
 	private void setBaseString(String baseString) {
 		this.baseString = baseString;
 	}
-	
-	/**
-	 * Проверяет, является ли базовая строка палиндромом.
-	 * Палиндром — строка, одинаково читающаяся слева направо и справа налево.
-	 * @return true, если базовая строка является палиндромом, иначе false
-	 */
-	public boolean isPalindrome() {
-		if (baseString == null) return false;
-		
-		int left = 0;
-		int right = baseString.length() - 1;
-		
-		while (left < right) {
-			if (baseString.charAt(left) != baseString.charAt(right)) {
-				return false;
-			}
-			left++;
-			right--;
-		}
-		return true;
-	}
 }
