@@ -33,15 +33,15 @@ public class AhoCorasick {
                 TrieNode u = entry.getValue();
 
                 TrieNode f = v.link;
-                while (f != root && !f.next.containsKey(ch)) {
+
+                // Оптимизация: вместо containsKey + get делаем один get
+                TrieNode next = f.next.get(ch);
+                while (f != root && next == null) {
                     f = f.link;
+                    next = f.next.get(ch);
                 }
 
-                if (f.next.containsKey(ch)) {
-                    u.link = f.next.get(ch);
-                } else {
-                    u.link = root;
-                }
+                u.link = (next != null) ? next : root;
 
                 // наследуем out по суффиксной ссылке (важно для шаблонов-суффиксов)
                 u.out.addAll(u.link.out);
@@ -63,18 +63,19 @@ public class AhoCorasick {
         TrieNode state = root;
         List<String> patterns = trie.getPatterns();
 
-        for (int i = 0; i < text.length(); i++) {
+        // микрооптимизация: не вызывать text.length() на каждой итерации
+        final int n = text.length();
+
+        for (int i = 0; i < n; i++) {
             char ch = text.charAt(i);
 
-            while (state != root && !state.next.containsKey(ch)) {
+            // Оптимизация: один get вместо containsKey + get
+            TrieNode next = state.next.get(ch);
+            while (state != root && next == null) {
                 state = state.link;
+                next = state.next.get(ch);
             }
-
-            if (state.next.containsKey(ch)) {
-                state = state.next.get(ch);
-            } else {
-                state = root;
-            }
+            state = (next != null) ? next : root;
 
             if (!state.out.isEmpty()) {
                 for (int id : state.out) {
@@ -117,10 +118,10 @@ public class AhoCorasick {
 
             System.out.println(
                     "node#" + vid +
-                    " depth=" + v.depth +
-                    " link=node#" + linkId +
-                    " out=" + v.out +
-                    " next=" + v.next.keySet()
+                            " depth=" + v.depth +
+                            " link=node#" + linkId +
+                            " out=" + v.out +
+                            " next=" + v.next.keySet()
             );
 
             for (TrieNode u : v.next.values()) {
